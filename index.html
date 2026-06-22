@@ -32,7 +32,6 @@
   html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic UI","Meiryo",sans-serif;font-size:15px;line-height:1.5;}
   body{min-height:100vh;padding-bottom:80px;}
 
-  /* ===== Header ===== */
   header{
     position:sticky;top:0;z-index:50;
     background:var(--primary);color:#fff;
@@ -41,6 +40,17 @@
   }
   .header-top{display:flex;align-items:center;justify-content:space-between;gap:8px;}
   .title{font-size:18px;font-weight:700;letter-spacing:.02em;display:flex;align-items:center;gap:6px;}
+  .sync-status{
+    font-size:11px;font-weight:600;padding:2px 8px;border-radius:10px;
+    background:rgba(255,255,255,0.2);
+    display:flex;align-items:center;gap:4px;
+  }
+  .sync-status.offline{background:rgba(255,255,255,0.15);opacity:.7;}
+  .sync-dot{width:6px;height:6px;border-radius:50%;background:#86efac;}
+  .sync-status.offline .sync-dot{background:#fca5a5;}
+  .sync-status.syncing .sync-dot{background:#fde047;animation:pulse 1s infinite;}
+  @keyframes pulse{0%,100%{opacity:1;}50%{opacity:.3;}}
+
   .user-badge{
     background:rgba(255,255,255,0.2);
     border:none;color:#fff;
@@ -48,7 +58,7 @@
     font-size:12px;font-weight:600;
     cursor:pointer;
   }
-  .header-actions{display:flex;gap:8px;}
+  .header-actions{display:flex;gap:8px;align-items:center;}
   .icon-btn{
     background:rgba(255,255,255,0.15);
     border:none;color:#fff;
@@ -58,7 +68,6 @@
   }
   .icon-btn:active{background:rgba(255,255,255,0.3);}
 
-  /* ===== Filters ===== */
   .filters{
     display:flex;gap:6px;overflow-x:auto;
     margin-top:10px;padding-bottom:2px;
@@ -76,10 +85,8 @@
   }
   .chip.active{background:#fff;color:var(--primary);}
 
-  /* ===== Main ===== */
   main{padding:14px 12px 0;max-width:680px;margin:0 auto;}
 
-  /* ===== Stats ===== */
   .stats{
     display:grid;grid-template-columns:repeat(3,1fr);gap:8px;
     margin-bottom:14px;
@@ -91,7 +98,6 @@
   .stat-num{font-size:20px;font-weight:700;color:var(--primary);}
   .stat-label{font-size:11px;color:var(--muted);margin-top:2px;}
 
-  /* ===== Categories quick filter ===== */
   .cats{
     display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;
   }
@@ -105,7 +111,6 @@
   .cat-chip.active{border-color:var(--primary);background:var(--primary-light);color:var(--primary);}
   .cat-dot{width:8px;height:8px;border-radius:50%;}
 
-  /* ===== Tasks ===== */
   .task{
     background:var(--card);
     border-radius:12px;
@@ -172,13 +177,11 @@
   .btn-small.danger{background:#fee2e2;color:var(--danger);}
   .btn-small.warn{background:#fef3c7;color:var(--warning);}
 
-  /* ===== Empty ===== */
   .empty{
     text-align:center;padding:40px 20px;color:var(--muted);
   }
   .empty-emoji{font-size:48px;margin-bottom:10px;}
 
-  /* ===== FAB ===== */
   .fab{
     position:fixed;bottom:20px;right:20px;
     width:58px;height:58px;border-radius:50%;
@@ -190,7 +193,6 @@
   }
   .fab:active{transform:scale(0.95);}
 
-  /* ===== Modal ===== */
   .modal-bg{
     position:fixed;inset:0;background:rgba(0,0,0,0.5);
     display:none;align-items:flex-end;justify-content:center;
@@ -231,7 +233,6 @@
   }
   .submit-btn:active{background:#4338ca;}
 
-  /* ===== Share modal ===== */
   .share-options{display:flex;flex-direction:column;gap:8px;}
   .share-opt{
     display:flex;align-items:center;gap:10px;
@@ -244,13 +245,7 @@
   .share-opt-text{flex:1;}
   .share-opt-title{font-weight:600;font-size:14px;}
   .share-opt-desc{font-size:11px;color:var(--muted);}
-  .share-code-box{
-    background:#f9fafb;padding:10px;border-radius:8px;
-    word-break:break-all;font-family:monospace;font-size:11px;
-    max-height:120px;overflow-y:auto;margin-top:8px;
-  }
 
-  /* ===== Category manage ===== */
   .cat-item{
     display:flex;align-items:center;gap:8px;
     padding:8px;background:#f9fafb;border-radius:8px;
@@ -262,7 +257,6 @@
     cursor:pointer;
   }
 
-  /* ===== Toast ===== */
   .toast{
     position:fixed;bottom:90px;left:50%;transform:translateX(-50%);
     background:#1f2937;color:#fff;
@@ -274,7 +268,6 @@
   }
   .toast.show{opacity:1;bottom:100px;}
 
-  /* ===== Settings ===== */
   .setting-row{
     display:flex;justify-content:space-between;align-items:center;
     padding:10px 0;border-bottom:1px solid var(--border);
@@ -287,16 +280,44 @@
     cursor:pointer;border:2px solid transparent;
   }
   .color-opt.selected{border-color:#1f2937;transform:scale(1.1);}
+
+  .space-card{
+    background:var(--primary-light);
+    border-radius:10px;padding:12px;
+    margin-bottom:10px;
+  }
+  .space-id-box{
+    background:#fff;border:1px solid var(--border);
+    padding:8px 10px;border-radius:6px;
+    font-family:monospace;font-size:12px;
+    word-break:break-all;
+    display:flex;align-items:center;justify-content:space-between;gap:8px;
+  }
+  .space-id-text{flex:1;}
+  .copy-mini{
+    background:var(--primary);color:#fff;
+    border:none;padding:5px 10px;border-radius:6px;
+    font-size:11px;cursor:pointer;flex:none;
+  }
+
+  .onboard-options{display:flex;flex-direction:column;gap:10px;margin-top:14px;}
+  .onboard-btn{
+    background:var(--primary-light);color:var(--primary);
+    border:none;padding:16px;border-radius:10px;
+    font-size:14px;font-weight:600;cursor:pointer;
+    text-align:left;
+  }
+  .onboard-btn .em{font-size:20px;margin-right:6px;}
+  .onboard-btn .d{font-size:11px;font-weight:400;color:var(--muted);margin-top:3px;}
 </style>
 </head>
 <body>
 
 <header>
   <div class="header-top">
-    <div class="title">✅ To-Do</div>
+    <div class="title">✅ To-Do <span class="sync-status" id="syncStatus"><span class="sync-dot"></span><span id="syncText">接続中</span></span></div>
     <div class="header-actions">
       <button class="user-badge" id="userBtn">👤 <span id="userName">自分</span></button>
-      <button class="icon-btn" id="shareBtn" title="共有">🔗</button>
       <button class="icon-btn" id="settingsBtn" title="設定">⚙️</button>
     </div>
   </div>
@@ -316,15 +337,33 @@
     <div class="stat"><div class="stat-num" id="statToday">0</div><div class="stat-label">今日</div></div>
     <div class="stat"><div class="stat-num" id="statDone">0</div><div class="stat-label">完了</div></div>
   </div>
-
   <div class="cats" id="cats"></div>
-
   <div id="taskList"></div>
 </main>
 
 <button class="fab" id="addBtn">＋</button>
 
-<!-- ===== Add/Edit Task Modal ===== -->
+<!-- Onboarding modal -->
+<div class="modal-bg" id="onboardModal">
+  <div class="modal">
+    <h2 class="modal-title">☁️ クラウド同期を設定</h2>
+    <div style="font-size:13px;color:var(--muted);margin-bottom:6px;">
+      他の端末や家族とタスクを共有するための「スペース」を設定します。
+    </div>
+    <div class="onboard-options">
+      <button class="onboard-btn" id="onboardCreate">
+        <span class="em">✨</span>新しいスペースを作る
+        <div class="d">自分専用にスタート。後で家族や仲間を招待できます</div>
+      </button>
+      <button class="onboard-btn" id="onboardJoin">
+        <span class="em">🔑</span>既存のスペースに参加
+        <div class="d">他の端末で使っているスペースIDを入力</div>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Task modal -->
 <div class="modal-bg" id="taskModal">
   <div class="modal">
     <h2 class="modal-title">
@@ -377,55 +416,25 @@
   </div>
 </div>
 
-<!-- ===== Share Modal ===== -->
-<div class="modal-bg" id="shareModal">
-  <div class="modal">
-    <h2 class="modal-title">共有 / バックアップ <button class="close-btn" data-close>✕</button></h2>
-    <div class="share-options">
-      <div class="share-opt" id="exportFileBtn">
-        <div class="share-opt-icon">📥</div>
-        <div class="share-opt-text">
-          <div class="share-opt-title">JSONファイルでエクスポート</div>
-          <div class="share-opt-desc">バックアップや他端末へ送る用</div>
-        </div>
-      </div>
-      <div class="share-opt" id="importFileBtn">
-        <div class="share-opt-icon">📤</div>
-        <div class="share-opt-text">
-          <div class="share-opt-title">JSONファイルからインポート</div>
-          <div class="share-opt-desc">受け取ったファイルを取り込む</div>
-        </div>
-      </div>
-      <div class="share-opt" id="shareLinkBtn">
-        <div class="share-opt-icon">🔗</div>
-        <div class="share-opt-text">
-          <div class="share-opt-title">共有リンクを作成</div>
-          <div class="share-opt-desc">URL一つで他の人にデータを送信</div>
-        </div>
-      </div>
-      <div class="share-opt" id="copyJsonBtn">
-        <div class="share-opt-icon">📋</div>
-        <div class="share-opt-text">
-          <div class="share-opt-title">JSONをコピー</div>
-          <div class="share-opt-desc">LINE/メールで貼り付けて共有</div>
-        </div>
-      </div>
-      <div class="share-opt" id="pasteJsonBtn">
-        <div class="share-opt-icon">📝</div>
-        <div class="share-opt-text">
-          <div class="share-opt-title">JSONを貼り付けて取り込む</div>
-          <div class="share-opt-desc">受け取ったテキストを入力</div>
-        </div>
-      </div>
-    </div>
-    <input type="file" id="fileInput" accept=".json,application/json" style="display:none" />
-  </div>
-</div>
-
-<!-- ===== Settings Modal ===== -->
+<!-- Settings modal -->
 <div class="modal-bg" id="settingsModal">
   <div class="modal">
     <h2 class="modal-title">設定 <button class="close-btn" data-close>✕</button></h2>
+
+    <div class="space-card">
+      <div style="font-weight:600;margin-bottom:6px;">☁️ クラウド同期スペース</div>
+      <div style="font-size:11px;color:var(--muted);margin-bottom:8px;">
+        他の端末や家族に共有して同期するためのID。秘密の合言葉として扱ってください。
+      </div>
+      <div class="space-id-box">
+        <span class="space-id-text" id="spaceIdText">-</span>
+        <button class="copy-mini" id="copySpaceBtn">コピー</button>
+      </div>
+      <div style="display:flex;gap:6px;margin-top:8px;">
+        <button class="btn-small" id="joinSpaceBtn">別スペースに参加</button>
+        <button class="btn-small warn" id="newSpaceBtn">新スペースを作成</button>
+      </div>
+    </div>
 
     <div class="form-group">
       <label class="form-label">表示名</label>
@@ -439,20 +448,25 @@
     </div>
 
     <div class="setting-row">
-      <span class="setting-label">完了済を自動で隠す</span>
-      <input type="checkbox" id="s_hideDone" />
-    </div>
-    <div class="setting-row">
       <span class="setting-label">期日順に並べる</span>
       <input type="checkbox" id="s_sortByDue" checked />
     </div>
 
     <button class="submit-btn" id="saveSettingsBtn" style="margin-top:14px;">保存</button>
-    <button class="btn-small danger" id="clearAllBtn" style="width:100%;margin-top:8px;padding:10px;">全データ削除</button>
+
+    <details style="margin-top:14px;">
+      <summary style="color:var(--muted);font-size:12px;cursor:pointer;">高度な操作</summary>
+      <div style="display:flex;flex-direction:column;gap:6px;margin-top:8px;">
+        <button class="btn-small" id="exportFileBtn" style="padding:10px;">📥 JSONエクスポート</button>
+        <button class="btn-small" id="importFileBtn" style="padding:10px;">📤 JSONインポート</button>
+        <button class="btn-small danger" id="clearAllBtn" style="padding:10px;">⚠️ ローカルデータ削除</button>
+      </div>
+      <input type="file" id="fileInput" accept=".json,application/json" style="display:none" />
+    </details>
   </div>
 </div>
 
-<!-- ===== Category Edit Modal ===== -->
+<!-- Category edit modal -->
 <div class="modal-bg" id="catEditModal">
   <div class="modal">
     <h2 class="modal-title"><span id="catEditTitle">カテゴリ編集</span><button class="close-btn" data-close>✕</button></h2>
@@ -471,9 +485,28 @@
 
 <div class="toast" id="toast"></div>
 
-<script>
-// ===== Storage =====
-const STORAGE_KEY = "todoApp_v1";
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-app.js";
+import {
+  getFirestore, doc, setDoc, onSnapshot, getDoc, enableIndexedDbPersistence
+} from "https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js";
+
+// ===== Firebase config =====
+const firebaseConfig = {
+  apiKey: "AIzaSyB_4xmm4jcdoStlwgBMURfNX0Th-pDkQHI",
+  authDomain: "todo-aoi.firebaseapp.com",
+  projectId: "todo-aoi",
+  storageBucket: "todo-aoi.firebasestorage.app",
+  messagingSenderId: "26673959937",
+  appId: "1:26673959937:web:4e6f40c46672755860dc00"
+};
+const fbApp = initializeApp(firebaseConfig);
+const db = getFirestore(fbApp);
+try { await enableIndexedDbPersistence(db); } catch(e) { /* multi-tab or unsupported */ }
+
+// ===== Storage / state =====
+const STORAGE_KEY = "todoApp_v2";
+const SPACE_KEY = "todoApp_spaceId";
 const defaultCategories = [
   { id: "work",    name: "仕事",   color: "#4f46e5" },
   { id: "private", name: "プライベート", color: "#10b981" },
@@ -489,9 +522,13 @@ let state = {
   user: "自分",
   filter: "active",
   categoryFilter: "all",
-  hideDone: false,
   sortByDue: true,
 };
+let spaceId = null;
+let unsubscribe = null;
+let pushTimer = null;
+let lastWriteAt = 0;
+let suppressNextSnapshot = false;
 
 function load(){
   try{
@@ -501,16 +538,127 @@ function load(){
       state = Object.assign(state, obj);
       if(!state.categories || !state.categories.length) state.categories = defaultCategories.slice();
     }
+    spaceId = localStorage.getItem(SPACE_KEY);
   }catch(e){console.error(e);}
 }
-function save(){
+function saveLocal(){
   localStorage.setItem(STORAGE_KEY, JSON.stringify({
     tasks: state.tasks,
     categories: state.categories,
     user: state.user,
-    hideDone: state.hideDone,
     sortByDue: state.sortByDue,
   }));
+}
+
+// ===== Cloud sync =====
+function setSyncStatus(s, text){
+  const el = document.getElementById("syncStatus");
+  const t = document.getElementById("syncText");
+  el.classList.remove("offline","syncing");
+  if(s==="offline") el.classList.add("offline");
+  if(s==="syncing") el.classList.add("syncing");
+  t.textContent = text;
+}
+
+function newSpaceId(){
+  try{
+    return crypto.randomUUID().replace(/-/g,"").slice(0,20);
+  }catch(e){
+    return (Date.now().toString(36) + Math.random().toString(36).slice(2,14)).replace(/\W/g,"");
+  }
+}
+
+async function setSpaceId(id, opts){
+  spaceId = id;
+  localStorage.setItem(SPACE_KEY, id);
+  if(unsubscribe){ unsubscribe(); unsubscribe = null; }
+  setSyncStatus("syncing","接続中...");
+
+  // Initial: check if doc exists
+  let docExisted = false;
+  try{
+    const snap = await getDoc(doc(db,"spaces",id));
+    docExisted = snap.exists();
+    if(docExisted && opts?.joinExisting){
+      const data = snap.data();
+      state.tasks = data.tasks || [];
+      state.categories = (data.categories && data.categories.length) ? data.categories : defaultCategories.slice();
+      saveLocal();
+      render();
+    }
+  }catch(e){ console.warn(e); }
+
+  // If new space (no doc yet) or creating new, push current local data
+  if(!docExisted || opts?.uploadLocal){
+    await pushNow();
+  }
+
+  // Subscribe to changes
+  unsubscribe = onSnapshot(doc(db,"spaces",id),
+    (snap)=>{
+      if(!snap.exists()) return;
+      if(suppressNextSnapshot && snap.metadata.hasPendingWrites){
+        // local pending write echo, ignore
+        return;
+      }
+      const data = snap.data();
+      const remoteUpdated = data.updatedAt || 0;
+      if(remoteUpdated && remoteUpdated <= lastWriteAt && snap.metadata.hasPendingWrites){
+        return;
+      }
+      if(Array.isArray(data.tasks)) state.tasks = data.tasks;
+      if(Array.isArray(data.categories) && data.categories.length) state.categories = data.categories;
+      saveLocal();
+      render();
+      setSyncStatus("online", navigator.onLine ? "同期済み" : "オフライン");
+    },
+    (err)=>{
+      console.error("snapshot error",err);
+      setSyncStatus("offline","オフライン");
+    }
+  );
+
+  document.getElementById("spaceIdText").textContent = id;
+}
+
+async function pushNow(){
+  if(!spaceId) return;
+  setSyncStatus("syncing","同期中...");
+  try{
+    lastWriteAt = Date.now();
+    suppressNextSnapshot = true;
+    await setDoc(doc(db,"spaces",spaceId), {
+      tasks: state.tasks,
+      categories: state.categories,
+      updatedAt: lastWriteAt,
+      updatedBy: state.user,
+    });
+    setSyncStatus("online","同期済み");
+  }catch(e){
+    console.error("push error",e);
+    setSyncStatus("offline","オフライン");
+  }finally{
+    setTimeout(()=>{ suppressNextSnapshot = false; }, 500);
+  }
+}
+
+function schedulePush(){
+  if(!spaceId) return;
+  setSyncStatus("syncing","同期中...");
+  clearTimeout(pushTimer);
+  pushTimer = setTimeout(pushNow, 600);
+}
+
+window.addEventListener("online", ()=>{
+  setSyncStatus("online","同期済み");
+  if(spaceId) pushNow();
+});
+window.addEventListener("offline", ()=> setSyncStatus("offline","オフライン"));
+
+// Save = local + scheduled cloud push
+function save(){
+  saveLocal();
+  schedulePush();
 }
 
 // ===== Helpers =====
@@ -522,6 +670,7 @@ function toast(msg){
   clearTimeout(toast._t);
   toast._t = setTimeout(()=>t.classList.remove("show"),2200);
 }
+window.toast = toast;
 function todayStr(){ const d=new Date(); return d.toISOString().slice(0,10); }
 function fmtDue(d){
   if(!d) return "";
@@ -545,6 +694,9 @@ function dueClass(d){
   return "";
 }
 function getCat(id){ return state.categories.find(c=>c.id===id) || {name:"未分類",color:"#6b7280"}; }
+function escapeHtml(s){
+  return String(s||"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));
+}
 
 // ===== Render =====
 function render(){
@@ -590,11 +742,9 @@ function renderStats(){
 function applyFilters(tasks){
   const today = todayStr();
   let list = tasks.slice();
-  // category
   if(state.categoryFilter !== "all"){
     list = list.filter(t=>t.category===state.categoryFilter);
   }
-  // status filter
   switch(state.filter){
     case "active":    list = list.filter(t=>!t.done && !t.archived); break;
     case "done":      list = list.filter(t=>t.done && !t.archived); break;
@@ -603,7 +753,6 @@ function applyFilters(tasks){
     case "upcoming":  list = list.filter(t=>!t.archived && !t.done && t.due && t.due>=today); break;
     case "all":       break;
   }
-  // sort
   list.sort((a,b)=>{
     if(a.done !== b.done) return a.done?1:-1;
     if(state.sortByDue){
@@ -675,10 +824,6 @@ function taskHtml(t){
     </div>`;
 }
 
-function escapeHtml(s){
-  return String(s||"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));
-}
-
 // ===== Actions =====
 function toggleDone(id){
   const t = state.tasks.find(x=>x.id===id);
@@ -702,12 +847,11 @@ function doAction(act,id){
   }
 }
 
-// ===== Modal: Task =====
+// ===== Task modal =====
 let editingId = null;
 function openTaskModal(task){
   editingId = task ? task.id : null;
   document.getElementById("modalTitleText").textContent = task ? "タスクを編集" : "タスクを追加";
-  // populate categories
   const sel = document.getElementById("f_category");
   sel.innerHTML = state.categories.map(c=>`<option value="${c.id}">${escapeHtml(c.name)}</option>`).join("");
   document.getElementById("f_title").value = task?.title || "";
@@ -751,7 +895,6 @@ document.getElementById("taskForm").onsubmit = (e)=>{
   closeModals();
 };
 
-// ===== Modals general =====
 function closeModals(){
   document.querySelectorAll(".modal-bg").forEach(m=>m.classList.remove("show"));
 }
@@ -760,7 +903,6 @@ document.querySelectorAll(".modal-bg").forEach(m=>{
   m.addEventListener("click", e=>{ if(e.target===m) closeModals(); });
 });
 
-// ===== Filter chips =====
 document.querySelectorAll("#filters .chip").forEach(c=>{
   c.onclick = ()=>{
     document.querySelectorAll("#filters .chip").forEach(x=>x.classList.remove("active"));
@@ -770,141 +912,41 @@ document.querySelectorAll("#filters .chip").forEach(c=>{
   };
 });
 
-// ===== Buttons =====
 document.getElementById("addBtn").onclick = ()=> openTaskModal();
 document.getElementById("userBtn").onclick = ()=>{
   const name = prompt("表示名を入力", state.user);
   if(name && name.trim()){ state.user = name.trim(); save(); render(); }
 };
-document.getElementById("shareBtn").onclick = ()=> document.getElementById("shareModal").classList.add("show");
 document.getElementById("settingsBtn").onclick = openSettings;
 
-// ===== Share =====
-function exportData(){
-  return JSON.stringify({
-    tasks: state.tasks,
-    categories: state.categories,
-    exportedBy: state.user,
-    exportedAt: new Date().toISOString(),
-  }, null, 2);
+// ===== Onboarding =====
+function showOnboarding(){
+  document.getElementById("onboardModal").classList.add("show");
 }
-function mergeImport(obj, mode){
-  if(!obj || !Array.isArray(obj.tasks)){ toast("無効なデータです"); return; }
-  if(mode==="replace"){
-    state.tasks = obj.tasks;
-    if(Array.isArray(obj.categories) && obj.categories.length) state.categories = obj.categories;
-  }else{
-    // merge by id
-    const existingIds = new Set(state.tasks.map(t=>t.id));
-    let added = 0, updated = 0;
-    obj.tasks.forEach(t=>{
-      const ex = state.tasks.find(x=>x.id===t.id);
-      if(ex){
-        // keep newest by updatedAt
-        if((t.updatedAt||0) > (ex.updatedAt||0)){
-          Object.assign(ex, t); updated++;
-        }
-      }else{
-        state.tasks.push(t); added++;
-      }
-    });
-    // merge categories by id
-    if(Array.isArray(obj.categories)){
-      obj.categories.forEach(c=>{
-        if(!state.categories.find(x=>x.id===c.id)) state.categories.push(c);
-      });
-    }
-    toast(`追加${added}件 / 更新${updated}件`);
+document.getElementById("onboardCreate").onclick = async ()=>{
+  const id = newSpaceId();
+  closeModals();
+  await setSpaceId(id, { uploadLocal: true });
+  toast("新しいスペースを作成しました");
+};
+document.getElementById("onboardJoin").onclick = async ()=>{
+  const id = prompt("参加するスペースIDを入力してください");
+  if(!id) return;
+  const cleanId = id.trim();
+  if(cleanId.length < 8){ toast("IDが短すぎます"); return; }
+  if(state.tasks.length > 0){
+    if(!confirm("既存のローカルタスクは上書きされます。続けますか？")) return;
   }
-  save(); render();
-}
-
-document.getElementById("exportFileBtn").onclick = ()=>{
-  const data = exportData();
-  const blob = new Blob([data], {type:"application/json"});
-  const a = document.createElement("a");
-  a.href = URL.createObjectURL(blob);
-  a.download = `todo_${new Date().toISOString().slice(0,10)}.json`;
-  a.click();
-  toast("ファイル保存しました");
+  closeModals();
+  await setSpaceId(cleanId, { joinExisting: true });
+  toast("スペースに参加しました");
 };
-document.getElementById("importFileBtn").onclick = ()=> document.getElementById("fileInput").click();
-document.getElementById("fileInput").onchange = (e)=>{
-  const f = e.target.files[0]; if(!f) return;
-  const r = new FileReader();
-  r.onload = ()=>{
-    try{
-      const obj = JSON.parse(r.result);
-      if(confirm("既存データに追加しますか？(キャンセル=置き換え)")){
-        mergeImport(obj, "merge");
-      }else{
-        if(confirm("本当に全データを置き換えますか？")) mergeImport(obj, "replace");
-      }
-      closeModals();
-    }catch(err){ toast("ファイル読込失敗"); }
-  };
-  r.readAsText(f);
-  e.target.value = "";
-};
-document.getElementById("copyJsonBtn").onclick = async ()=>{
-  const data = exportData();
-  try{
-    await navigator.clipboard.writeText(data);
-    toast("JSONをコピーしました");
-  }catch(e){
-    prompt("以下をコピーしてください", data);
-  }
-};
-document.getElementById("pasteJsonBtn").onclick = ()=>{
-  const txt = prompt("貼り付けたJSONを入力");
-  if(!txt) return;
-  try{
-    const obj = JSON.parse(txt);
-    if(confirm("既存データに追加しますか？(キャンセル=置き換え)")){
-      mergeImport(obj, "merge");
-    }else{
-      if(confirm("本当に全データを置き換えますか？")) mergeImport(obj, "replace");
-    }
-    closeModals();
-  }catch(e){ toast("JSON形式が無効です"); }
-};
-document.getElementById("shareLinkBtn").onclick = async ()=>{
-  const data = exportData();
-  try{
-    const b64 = btoa(unescape(encodeURIComponent(data)));
-    const url = `${location.origin}${location.pathname}#data=${b64}`;
-    if(url.length > 6000 && !confirm("データが大きいです。URL共有を続けますか？")) return;
-    try{
-      await navigator.clipboard.writeText(url);
-      toast("共有URLをコピーしました");
-    }catch(e){
-      prompt("以下のURLをコピーしてください", url);
-    }
-  }catch(e){ toast("生成失敗"); }
-};
-
-// auto-import from hash
-(function checkHash(){
-  if(location.hash.startsWith("#data=")){
-    try{
-      const b64 = location.hash.slice(6);
-      const json = decodeURIComponent(escape(atob(b64)));
-      const obj = JSON.parse(json);
-      setTimeout(()=>{
-        if(confirm(`共有データを受信しました(${obj.tasks?.length||0}件)。取り込みますか？(既存データに追加)`)){
-          mergeImport(obj, "merge");
-        }
-        history.replaceState(null,"",location.pathname);
-      }, 200);
-    }catch(e){console.error(e);}
-  }
-})();
 
 // ===== Settings =====
 function openSettings(){
   document.getElementById("s_name").value = state.user;
-  document.getElementById("s_hideDone").checked = state.hideDone;
   document.getElementById("s_sortByDue").checked = state.sortByDue;
+  document.getElementById("spaceIdText").textContent = spaceId || "(未設定)";
   renderCatManage();
   document.getElementById("settingsModal").classList.add("show");
 }
@@ -926,25 +968,83 @@ function renderCatManage(){
 document.getElementById("saveSettingsBtn").onclick = ()=>{
   const n = document.getElementById("s_name").value.trim();
   if(n) state.user = n;
-  state.hideDone = document.getElementById("s_hideDone").checked;
   state.sortByDue = document.getElementById("s_sortByDue").checked;
   save(); render(); closeModals();
   toast("設定を保存しました");
 };
+document.getElementById("copySpaceBtn").onclick = async ()=>{
+  if(!spaceId) return;
+  try{ await navigator.clipboard.writeText(spaceId); toast("スペースIDをコピーしました"); }
+  catch(e){ prompt("コピーしてください", spaceId); }
+};
+document.getElementById("joinSpaceBtn").onclick = async ()=>{
+  const id = prompt("参加するスペースIDを入力してください");
+  if(!id) return;
+  const cleanId = id.trim();
+  if(cleanId.length < 8){ toast("IDが短すぎます"); return; }
+  if(!confirm("現在のタスクは新しいスペースのデータで置き換わります。続けますか？")) return;
+  closeModals();
+  await setSpaceId(cleanId, { joinExisting: true });
+  toast("スペースを切り替えました");
+};
+document.getElementById("newSpaceBtn").onclick = async ()=>{
+  if(!confirm("新しいスペースを作成しますか？現在のタスクが新しいスペースにコピーされます。")) return;
+  const id = newSpaceId();
+  closeModals();
+  await setSpaceId(id, { uploadLocal: true });
+  toast("新スペースを作成しました");
+};
 document.getElementById("clearAllBtn").onclick = ()=>{
-  if(confirm("全タスクとカテゴリを削除します。本当によろしいですか？")){
-    if(confirm("最終確認：取り消しできません。本当に削除しますか？")){
-      state.tasks = []; state.categories = defaultCategories.slice();
-      save(); render(); closeModals();
-      toast("全データを削除しました");
-    }
+  if(confirm("ローカルキャッシュとタスクを削除します。本当によろしいですか？\n（クラウドのデータは残ります。元のスペースIDで再参加すれば復元可能）")){
+    state.tasks = []; state.categories = defaultCategories.slice();
+    saveLocal(); render();
+    toast("ローカル削除しました");
   }
 };
-document.getElementById("addCatBtn").onclick = ()=>{
-  openCatEdit(null);
+document.getElementById("addCatBtn").onclick = ()=> openCatEdit(null);
+
+document.getElementById("exportFileBtn").onclick = ()=>{
+  const data = JSON.stringify({
+    tasks: state.tasks, categories: state.categories,
+    exportedBy: state.user, exportedAt: new Date().toISOString(),
+  }, null, 2);
+  const blob = new Blob([data], {type:"application/json"});
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = `todo_${new Date().toISOString().slice(0,10)}.json`;
+  a.click();
+  toast("ファイル保存しました");
+};
+document.getElementById("importFileBtn").onclick = ()=> document.getElementById("fileInput").click();
+document.getElementById("fileInput").onchange = (e)=>{
+  const f = e.target.files[0]; if(!f) return;
+  const r = new FileReader();
+  r.onload = ()=>{
+    try{
+      const obj = JSON.parse(r.result);
+      if(!Array.isArray(obj.tasks)){ toast("無効なデータ"); return; }
+      const existingIds = new Set(state.tasks.map(t=>t.id));
+      let added=0,updated=0;
+      obj.tasks.forEach(t=>{
+        const ex = state.tasks.find(x=>x.id===t.id);
+        if(ex){
+          if((t.updatedAt||0) > (ex.updatedAt||0)){ Object.assign(ex,t); updated++; }
+        }else{ state.tasks.push(t); added++; }
+      });
+      if(Array.isArray(obj.categories)){
+        obj.categories.forEach(c=>{
+          if(!state.categories.find(x=>x.id===c.id)) state.categories.push(c);
+        });
+      }
+      save(); render();
+      toast(`追加${added}件/更新${updated}件`);
+    }catch(err){ toast("ファイル読込失敗"); }
+  };
+  r.readAsText(f);
+  e.target.value = "";
 };
 
-// ===== Category Edit =====
+// ===== Category edit =====
 let editingCatId = null;
 function openCatEdit(c){
   editingCatId = c?.id || null;
@@ -984,7 +1084,7 @@ document.getElementById("saveCatBtn").onclick = ()=>{
 };
 document.getElementById("deleteCatBtn").onclick = ()=>{
   if(!editingCatId) return;
-  if(confirm("このカテゴリを削除しますか？（タスクは「未分類」になります）")){
+  if(confirm("このカテゴリを削除しますか？（タスクは未分類になります）")){
     state.categories = state.categories.filter(c=>c.id!==editingCatId);
     state.tasks.forEach(t=>{ if(t.category===editingCatId) t.category = ""; });
     save(); renderCatManage(); render();
@@ -997,51 +1097,44 @@ document.getElementById("deleteCatBtn").onclick = ()=>{
 load();
 render();
 
-// ===== Service Worker registration with auto-update =====
+if(spaceId){
+  setSpaceId(spaceId, {});
+}else{
+  setSyncStatus("offline","未設定");
+  showOnboarding();
+}
+
+// ===== Service Worker =====
 if ("serviceWorker" in navigator && location.protocol !== "file:") {
-  window.addEventListener("load", async () => {
-    try {
-      const reg = await navigator.serviceWorker.register("sw.js");
-
-      // Check for updates every time app gains focus / becomes visible
-      const checkUpdate = () => reg.update().catch(() => {});
-      document.addEventListener("visibilitychange", () => {
-        if (document.visibilityState === "visible") checkUpdate();
+  try {
+    const reg = await navigator.serviceWorker.register("sw.js");
+    const checkUpdate = () => reg.update().catch(()=>{});
+    document.addEventListener("visibilitychange", () => {
+      if (document.visibilityState === "visible") checkUpdate();
+    });
+    window.addEventListener("focus", checkUpdate);
+    setInterval(checkUpdate, 30 * 60 * 1000);
+    const promptUpdate = (worker) => worker.postMessage("SKIP_WAITING");
+    if (reg.waiting) promptUpdate(reg.waiting);
+    reg.addEventListener("updatefound", () => {
+      const newSW = reg.installing;
+      if (!newSW) return;
+      newSW.addEventListener("statechange", () => {
+        if (newSW.state === "installed" && navigator.serviceWorker.controller) {
+          promptUpdate(newSW);
+        }
       });
-      window.addEventListener("focus", checkUpdate);
-      // Periodic check (every 30 min while open)
-      setInterval(checkUpdate, 30 * 60 * 1000);
-
-      // Detect new SW waiting → tell it to skip waiting
-      const promptUpdate = (worker) => {
-        worker.postMessage("SKIP_WAITING");
-      };
-
-      if (reg.waiting) promptUpdate(reg.waiting);
-
-      reg.addEventListener("updatefound", () => {
-        const newSW = reg.installing;
-        if (!newSW) return;
-        newSW.addEventListener("statechange", () => {
-          if (newSW.state === "installed" && navigator.serviceWorker.controller) {
-            promptUpdate(newSW);
-          }
-        });
-      });
-
-      // Reload once the new SW takes control
-      let refreshing = false;
-      navigator.serviceWorker.addEventListener("controllerchange", () => {
-        if (refreshing) return;
-        refreshing = true;
-        // Small toast then reload
-        try { toast("新しいバージョンに更新中..."); } catch (e) {}
-        setTimeout(() => location.reload(), 600);
-      });
-    } catch (e) {
-      console.warn("SW register failed", e);
-    }
-  });
+    });
+    let refreshing = false;
+    navigator.serviceWorker.addEventListener("controllerchange", () => {
+      if (refreshing) return;
+      refreshing = true;
+      try { toast("新しいバージョンに更新中..."); } catch(e){}
+      setTimeout(() => location.reload(), 600);
+    });
+  } catch (e) {
+    console.warn("SW register failed", e);
+  }
 }
 </script>
 </body>
