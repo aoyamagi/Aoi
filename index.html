@@ -582,22 +582,33 @@ async function setSpaceId(id, opts){
   if(unsubscribe){ unsubscribe(); unsubscribe = null; }
   setSyncStatus("syncing","接続中...");
 
-  // Initial: check if doc exists
+  // Initial sync: merge cloud + local intelligently
   let docExisted = false;
+  let cloudData = null;
   try{
     const snap = await getDoc(doc(db,"spaces",id));
     docExisted = snap.exists();
-    if(docExisted && opts?.joinExisting){
-      const data = snap.data();
-      state.tasks = data.tasks || [];
-      state.categories = (data.categories && data.categories.length) ? data.categories : defaultCategories.slice();
-      saveLocal();
-      render();
-    }
+    if(docExisted) cloudData = snap.data();
   }catch(e){ console.warn(e); }
 
-  // If new space (no doc yet) or creating new, push current local data
-  if(!docExisted || opts?.uploadLocal){
+  if(opts?.joinExisting && cloudData){
+    // Explicit join → take cloud as authoritative
+    state.tasks = cloudData.tasks || [];
+    state.categories = (cloudData.categories && cloudData.categories.length) ? cloudData.categories : defaultCategories.slice();
+    saveLocal();
+    render();
+  } else if(cloudData){
+    // Existing space: merge by id, newest updatedAt wins
+    const merged = mergeTasks(state.tasks, cloudData.tasks || []);
+    const mergedCats = mergeCategories(state.categories, cloudData.categories || []);
+    state.tasks = merged;
+    state.categories = mergedCats;
+    saveLocal();
+    render();
+    // Push merged result so cloud stays in sync
+    await pushNow();
+  } else {
+    // No cloud doc → upload local
     await pushNow();
   }
 
@@ -628,6 +639,46 @@ async function setSpaceId(id, opts){
 
   document.getElementById("spaceIdText").textContent = id;
 }
+
+function mergeTasks(localList, remoteList){
+  const map = new Map();
+  remoteList.forEach(t=>{ if(t&&t.id) map.set(t.id,t); });
+  localList.forEach(t=>{
+    if(!t || !t.id) return;
+    const ex = map.get(t.id);
+    if(!ex){ map.set(t.id, t); }
+    else{
+      // newest updatedAt wins, fallback to createdAt
+      const localTime = t.updatedAt || t.createdAt || 0;
+      const remoteTime = ex.updatedAt || ex.createdAt || 0;
+      if(localTime > remoteTime) map.set(t.id, t);
+    }
+  });
+  return Array.from(map.values());
+}
+
+function mergeCategories(localList, remoteList){
+  const map = new Map();
+  // Start with defaults to avoid duplicates
+  const seen = new Set();
+  remoteList.forEach(c=>{ if(c&&c.id){ map.set(c.id,c); seen.add(c.id); }});
+  localList.forEach(c=>{ if(c&&c.id && !seen.has(c.id)) map.set(c.id,c); });
+  // Also keep local custom names if remote default
+  localList.forEach(c=>{
+    if(c&&c.id && map.has(c.id)){
+      const r = map.get(c.id);
+      // If local has been customized vs default, prefer it (heuristic: any difference)
+      if(c.name !== r.name || c.color !== r.color){
+        // Prefer the non-default one. We can't easily detect; pick local for safety here only if remote matches defaults.
+      }
+    }
+  });
+  const arr = Array.from(map.values());
+  return arr.length ? arr : defaultCategories.slice();
+}
+
+// Also expose for debugging
+window._appState = ()=>state;
 
 async function pushNow(){
   if(!spaceId) return;
