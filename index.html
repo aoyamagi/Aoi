@@ -532,6 +532,14 @@ let suppressNextSnapshot = false;
 
 function load(){
   try{
+    // Migrate from older versions
+    if(!localStorage.getItem(STORAGE_KEY)){
+      const oldV1 = localStorage.getItem("todoApp_v1");
+      if(oldV1){
+        localStorage.setItem(STORAGE_KEY, oldV1);
+        console.log("Migrated data from todoApp_v1");
+      }
+    }
     const raw = localStorage.getItem(STORAGE_KEY);
     if(raw){
       const obj = JSON.parse(raw);
