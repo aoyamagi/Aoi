@@ -4,6 +4,9 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 <meta name="theme-color" content="#4f46e5" />
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+<meta http-equiv="Pragma" content="no-cache" />
+<meta http-equiv="Expires" content="0" />
 <title>To-Do 整理アプリ</title>
 <link rel="manifest" href="manifest.json" />
 <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png" />
@@ -994,10 +997,50 @@ document.getElementById("deleteCatBtn").onclick = ()=>{
 load();
 render();
 
-// Register service worker (PWA)
+// ===== Service Worker registration with auto-update =====
 if ("serviceWorker" in navigator && location.protocol !== "file:") {
-  window.addEventListener("load", () => {
-    navigator.serviceWorker.register("sw.js").catch((e) => console.warn("SW register failed", e));
+  window.addEventListener("load", async () => {
+    try {
+      const reg = await navigator.serviceWorker.register("sw.js");
+
+      // Check for updates every time app gains focus / becomes visible
+      const checkUpdate = () => reg.update().catch(() => {});
+      document.addEventListener("visibilitychange", () => {
+        if (document.visibilityState === "visible") checkUpdate();
+      });
+      window.addEventListener("focus", checkUpdate);
+      // Periodic check (every 30 min while open)
+      setInterval(checkUpdate, 30 * 60 * 1000);
+
+      // Detect new SW waiting → tell it to skip waiting
+      const promptUpdate = (worker) => {
+        worker.postMessage("SKIP_WAITING");
+      };
+
+      if (reg.waiting) promptUpdate(reg.waiting);
+
+      reg.addEventListener("updatefound", () => {
+        const newSW = reg.installing;
+        if (!newSW) return;
+        newSW.addEventListener("statechange", () => {
+          if (newSW.state === "installed" && navigator.serviceWorker.controller) {
+            promptUpdate(newSW);
+          }
+        });
+      });
+
+      // Reload once the new SW takes control
+      let refreshing = false;
+      navigator.serviceWorker.addEventListener("controllerchange", () => {
+        if (refreshing) return;
+        refreshing = true;
+        // Small toast then reload
+        try { toast("新しいバージョンに更新中..."); } catch (e) {}
+        setTimeout(() => location.reload(), 600);
+      });
+    } catch (e) {
+      console.warn("SW register failed", e);
+    }
   });
 }
 </script>
