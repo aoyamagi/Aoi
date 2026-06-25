@@ -177,9 +177,20 @@
   .btn-small.danger{background:#fee2e2;color:var(--danger);}
   .btn-small.warn{background:#fef3c7;color:var(--warning);}
 
-  .empty{
-    text-align:center;padding:40px 20px;color:var(--muted);
+  .shop-btn{
+    flex:none;
+    background:linear-gradient(135deg,#ff9900,#ff7700);
+    color:#fff;
+    border:none;
+    width:36px;height:36px;border-radius:50%;
+    font-size:16px;cursor:pointer;
+    display:flex;align-items:center;justify-content:center;
+    box-shadow:0 2px 6px rgba(255,119,0,0.35);
+    align-self:center;
+    text-decoration:none;
+    transition:transform .1s;
   }
+  .shop-btn:active{transform:scale(0.92);}
   .empty-emoji{font-size:48px;margin-bottom:10px;}
 
   .fab{
@@ -396,6 +407,11 @@
             <option value="high">高</option>
           </select>
         </div>
+      </div>
+      <div class="form-group" id="f_shopUrlGroup" style="display:none;">
+        <label class="form-label">🛒 Amazon リンク（買い物カテゴリ用）</label>
+        <input class="form-input" id="f_shopUrl" type="url" placeholder="https://www.amazon.co.jp/..." />
+        <div style="font-size:11px;color:var(--muted);margin-top:4px;">入力すると、タスク一覧から1タップで開けます</div>
       </div>
       <div class="row">
         <div class="form-group">
@@ -753,8 +769,17 @@ function dueClass(d){
   return "";
 }
 function getCat(id){ return state.categories.find(c=>c.id===id) || {name:"未分類",color:"#6b7280"}; }
+function isShoppingCat(catId){
+  const c = state.categories.find(x=>x.id===catId);
+  if(!c) return false;
+  return c.id === "shop" || /買い物|shop|shopping/i.test(c.name);
+}
 function escapeHtml(s){
   return String(s||"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));
+}
+function escapeAttr(s){
+  // For URL attributes — basic safety
+  return String(s||"").replace(/["'<>]/g,"");
 }
 
 // ===== Render =====
@@ -837,7 +862,13 @@ function renderTasks(){
   wrap.querySelectorAll(".task").forEach(el=>{
     const id = el.dataset.id;
     el.querySelector(".check").onclick = (e)=>{ e.stopPropagation(); toggleDone(id); };
-    el.querySelector(".task-row").onclick = ()=> el.classList.toggle("expanded");
+    el.querySelector(".task-row").onclick = (e)=>{
+      // Don't toggle when clicking the shop button
+      if(e.target.closest("[data-shop]")) return;
+      el.classList.toggle("expanded");
+    };
+    const shopEl = el.querySelector("[data-shop]");
+    if(shopEl) shopEl.onclick = (e)=> e.stopPropagation();
     el.querySelectorAll("[data-act]").forEach(b=>{
       b.onclick = (e)=>{ e.stopPropagation(); doAction(b.dataset.act, id); };
     });
@@ -848,6 +879,7 @@ function taskHtml(t){
   const cat = getCat(t.category);
   const prText = {high:"高",mid:"中",low:"低"}[t.priority]||"中";
   const items = (t.items||"").trim();
+  const showShopBtn = isShoppingCat(t.category) && t.shopUrl;
   return `
     <div class="task ${t.done?"done":""} ${t.archived?"archived":""}" data-id="${t.id}">
       <div class="task-row">
@@ -865,8 +897,10 @@ function taskHtml(t){
             ${items?`<span>🎒 ${items.split("\n").filter(Boolean).length}件</span>`:""}
           </div>
         </div>
+        ${showShopBtn ? `<a class="shop-btn" href="${escapeAttr(t.shopUrl)}" target="_blank" rel="noopener noreferrer" title="Amazonで開く" data-shop>🛒</a>` : ""}
       </div>
       <div class="task-detail">
+        ${showShopBtn?`<div class="detail-block"><div class="detail-label">🛒 Amazon リンク</div><a href="${escapeAttr(t.shopUrl)}" target="_blank" rel="noopener noreferrer" style="color:#ff7700;font-size:13px;word-break:break-all;">${escapeHtml(t.shopUrl)}</a></div>`:""}
         ${t.purpose?`<div class="detail-block"><div class="detail-label">🎯 目的</div><div class="detail-text">${escapeHtml(t.purpose)}</div></div>`:""}
         ${items?`<div class="detail-block"><div class="detail-label">🎒 持ち物</div><ul class="items-list">${items.split("\n").filter(Boolean).map(i=>`<li>${escapeHtml(i)}</li>`).join("")}</ul></div>`:""}
         ${t.due?`<div class="detail-block"><div class="detail-label">📅 期日</div><div class="detail-text">${t.due}</div></div>`:""}
@@ -921,8 +955,17 @@ function openTaskModal(task){
   document.getElementById("f_due").value = task?.due || "";
   document.getElementById("f_assignee").value = task?.assignee || "";
   document.getElementById("f_notes").value = task?.notes || "";
+  document.getElementById("f_shopUrl").value = task?.shopUrl || "";
+  updateShopUrlVisibility();
   document.getElementById("taskModal").classList.add("show");
 }
+
+function updateShopUrlVisibility(){
+  const cat = document.getElementById("f_category").value;
+  const show = isShoppingCat(cat);
+  document.getElementById("f_shopUrlGroup").style.display = show ? "" : "none";
+}
+document.getElementById("f_category").addEventListener("change", updateShopUrlVisibility);
 
 document.getElementById("taskForm").onsubmit = (e)=>{
   e.preventDefault();
@@ -935,6 +978,7 @@ document.getElementById("taskForm").onsubmit = (e)=>{
     due: document.getElementById("f_due").value,
     assignee: document.getElementById("f_assignee").value.trim(),
     notes: document.getElementById("f_notes").value.trim(),
+    shopUrl: document.getElementById("f_shopUrl").value.trim(),
   };
   if(!data.title) return;
   if(editingId){

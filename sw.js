@@ -4,7 +4,7 @@
 //  - Other assets: Stale-While-Revalidate (show cached, update in background)
 //  - Bump CACHE_VERSION on each release to force refresh.
 
-const CACHE_VERSION = "v6";
+const CACHE_VERSION = "v7";
 const CACHE = `todo-app-${CACHE_VERSION}`;
 
 const ASSETS = [
