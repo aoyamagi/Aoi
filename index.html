@@ -120,7 +120,6 @@
     transition:all .15s;
   }
   .task.done .task-title{text-decoration:line-through;color:var(--muted);}
-  .task.archived{opacity:.55;}
   .task-row{
     display:flex;align-items:flex-start;
     padding:12px;gap:10px;cursor:pointer;
@@ -337,7 +336,6 @@
     <button class="chip" data-filter="today">今日</button>
     <button class="chip" data-filter="upcoming">予定</button>
     <button class="chip" data-filter="done">完了済</button>
-    <button class="chip" data-filter="archived">アーカイブ</button>
     <button class="chip" data-filter="all">すべて</button>
   </div>
 </header>
@@ -562,6 +560,8 @@ function load(){
       state = Object.assign(state, obj);
       if(!state.categories || !state.categories.length) state.categories = defaultCategories.slice();
     }
+    // Cleanup: archive flag no longer supported, restore archived tasks
+    state.tasks.forEach(t=>{ if(t.archived) delete t.archived; });
     spaceId = localStorage.getItem(SPACE_KEY);
   }catch(e){console.error(e);}
 }
@@ -811,7 +811,6 @@ function renderStats(){
   const today = todayStr();
   let active=0, todayCount=0, done=0;
   state.tasks.forEach(t=>{
-    if(t.archived) return;
     if(t.done){ done++; }
     else{
       active++;
@@ -830,11 +829,10 @@ function applyFilters(tasks){
     list = list.filter(t=>t.category===state.categoryFilter);
   }
   switch(state.filter){
-    case "active":    list = list.filter(t=>!t.done && !t.archived); break;
-    case "done":      list = list.filter(t=>t.done && !t.archived); break;
-    case "archived":  list = list.filter(t=>t.archived); break;
-    case "today":     list = list.filter(t=>!t.archived && t.due===today); break;
-    case "upcoming":  list = list.filter(t=>!t.archived && !t.done && t.due && t.due>=today); break;
+    case "active":    list = list.filter(t=>!t.done); break;
+    case "done":      list = list.filter(t=>t.done); break;
+    case "today":     list = list.filter(t=>t.due===today); break;
+    case "upcoming":  list = list.filter(t=>!t.done && t.due && t.due>=today); break;
     case "all":       break;
   }
   list.sort((a,b)=>{
@@ -881,7 +879,7 @@ function taskHtml(t){
   const items = (t.items||"").trim();
   const showShopBtn = isShoppingCat(t.category) && t.shopUrl;
   return `
-    <div class="task ${t.done?"done":""} ${t.archived?"archived":""}" data-id="${t.id}">
+    <div class="task ${t.done?"done":""}" data-id="${t.id}">
       <div class="task-row">
         <div class="check ${t.done?"checked":""}"></div>
         <div class="task-body">
@@ -908,9 +906,6 @@ function taskHtml(t){
         <div class="detail-block" style="font-size:11px;color:var(--muted);">作成: ${escapeHtml(t.createdBy||"-")}${t.updatedBy?` / 更新: ${escapeHtml(t.updatedBy)}`:""}</div>
         <div class="task-buttons">
           <button class="btn-small" data-act="edit">✏️ 編集</button>
-          ${t.archived
-            ? `<button class="btn-small" data-act="unarchive">↩️ 戻す</button>`
-            : `<button class="btn-small warn" data-act="archive">📦 アーカイブ</button>`}
           <button class="btn-small danger" data-act="delete">🗑️ 削除</button>
         </div>
       </div>
@@ -930,8 +925,6 @@ function doAction(act,id){
   const t = state.tasks.find(x=>x.id===id);
   if(!t) return;
   if(act==="edit"){ openTaskModal(t); }
-  else if(act==="archive"){ t.archived=true; t.updatedBy=state.user; save(); render(); toast("アーカイブしました"); }
-  else if(act==="unarchive"){ t.archived=false; save(); render(); toast("戻しました"); }
   else if(act==="delete"){
     if(confirm("このタスクを削除しますか？")){
       state.tasks = state.tasks.filter(x=>x.id!==id);
@@ -989,7 +982,7 @@ document.getElementById("taskForm").onsubmit = (e)=>{
     state.tasks.unshift({
       id: uid(),
       ...data,
-      done:false, archived:false,
+      done:false,
       createdBy: state.user, createdAt: Date.now(),
     });
     toast("追加しました");
@@ -1198,6 +1191,7 @@ document.getElementById("deleteCatBtn").onclick = ()=>{
 
 // ===== Init =====
 load();
+saveLocal(); // Persist any migration cleanup
 render();
 
 if(spaceId){
